@@ -1,5 +1,7 @@
 import type { RequestStatus } from "@/common/types"
-import { createSlice, isFulfilled } from "@reduxjs/toolkit"
+import { createSlice, isFulfilled, isPending } from "@reduxjs/toolkit"
+import { todolistsApi } from "@/features/todolists/api/todolistsApi.ts"
+import { tasksApi } from "@/features/todolists/api/tasksApi.ts"
 
 export const appSlice = createSlice({
   name: "app",
@@ -17,14 +19,13 @@ export const appSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addMatcher(
-        (action) => {
-          console.log(action.type)
-          // Пробегается по всем action, даже которые находятся в апи
-          return false
-        },
-        (state, _action) => {
-          state.status = "loading"
+      .addMatcher(isPending,
+        (state, action) => {
+        if(todolistsApi.endpoints.getTodolists.matchPending(action) || tasksApi.endpoints.getTasks.matchPending(action)) {
+          // обработка для отдельных участков
+          return
+        }
+        state.status = "loading"
         },
       )
       .addMatcher(isFulfilled, (state, _action) => {
