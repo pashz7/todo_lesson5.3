@@ -3,15 +3,20 @@ import { useGetTasksQuery } from "@/features/todolists/api/tasksApi"
 import type { DomainTodolist } from "@/features/todolists/model/todolists-slice"
 import List from "@mui/material/List"
 import { TaskItem } from "./TaskItem/TaskItem"
+import { useAppDispatch } from "@/common/hooks"
+import { setAppErrorAC } from "@/app/app-slice.ts"
 
 type Props = {
   todolist: DomainTodolist
 }
 
+
 export const Tasks = ({ todolist }: Props) => {
   const { id, filter } = todolist
+  const dispatch = useAppDispatch()
 
-  const { data } = useGetTasksQuery(id)
+  const { data, error } = useGetTasksQuery("id")
+  console.log(error)
 
   let filteredTasks = data?.items
   if (filter === "active") {
@@ -20,6 +25,8 @@ export const Tasks = ({ todolist }: Props) => {
   if (filter === "completed") {
     filteredTasks = filteredTasks?.filter((task) => task.status === TaskStatus.Completed)
   }
+
+
 
   return (
     <>
