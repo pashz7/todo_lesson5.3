@@ -19,6 +19,7 @@ import IconButton from "@mui/material/IconButton"
 import LinearProgress from "@mui/material/LinearProgress"
 import Switch from "@mui/material/Switch"
 import Toolbar from "@mui/material/Toolbar"
+import { baseApi } from "@/app/baseApi.ts"
 
 export const Header = () => {
   const isLoggedIn = useAppSelector(selectIsLoggedIn)
@@ -40,7 +41,11 @@ export const Header = () => {
       if (res.data?.resultCode === ResultCode.Success) {
         dispatch(setIsLoggedInAC({ isLoggedIn: false }))
         localStorage.removeItem(AUTH_TOKEN)
+        // dispatch(baseApi.util.resetApiState())  пеовый вариант сброса кэша
       }
+    }).then(()=>{
+      dispatch(baseApi.util.invalidateTags( ["Task"]))
+      //второй споособ очистки
     })
   }
 
